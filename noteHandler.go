@@ -1,23 +1,39 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 )
+
+type Note struct {
+	Text string `json:"text"`
+}
 
 func noteHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		fmt.Fprintln(w, "метод Get")
+		response := map[string]string{"message": "ноте"}
+		json.NewEncoder(w).Encode(response)
 	case "POST":
+		var note Note
 
-		fmt.Fprintln(w, "POST")
+		if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		json.NewEncoder(w).Encode(note)
+
 	case "PUT":
+		var note Note
 
-		fmt.Fprintln(w, "PUT")
+		if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		json.NewEncoder(w).Encode(note)
 	case "DELETE":
-
-		fmt.Fprintln(w, "DELETE")
+		response := map[string]string{"message": "ноте делете"}
+		json.NewEncoder(w).Encode(response)
 	default:
 
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
